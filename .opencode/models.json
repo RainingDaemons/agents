@@ -1,0 +1,12 @@
+{
+    "agent": {
+        "chat": "opencode-go/mimo-v2.6-flash",
+        "commit": "opencode-go/mimo-v2.6-flash",
+        "review": "opencode-go/deepseek-v4.1-flash",
+        "test": "opencode-go/qwen3.8-flash"
+    },
+    "commands": {
+        "document": "opencode-go/mimo-v2.6-flash",
+        "ship": "opencode-go/deepseek-v4.1-flash"
+    }
+}

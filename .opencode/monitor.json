@@ -1,0 +1,10 @@
+{
+    "enabled": true,
+    "agents_timeout": "15m",
+    "poll_interval": "10s",
+    "timeout_mode": "busy_only",
+    "restart_mode": "resume",
+    "max_restarts": 2,
+    "auto_restart": true,
+    "confirm_first_restart": true
+}
