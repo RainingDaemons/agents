@@ -1,0 +1,26 @@
+Act as a senior product manager.
+
+Create a detailed Product Requirements Document (PRD) for the following product:
+
+Product idea: 
+[replace with your product idea]
+
+Context:
+- Target users: [replace with target users]
+- Problem statement: [replace with problem statement]
+- Business goal: [replace with business goal]
+- Platform: [web/desktop/mobile]
+
+Include:
+1. Executive summary
+2. Problem statement
+3. Goals and success metrics (KPIs)
+4. User personas
+5. User journeys
+6. Functional requirements (prioritized)
+7. Non-functional requirements (performance, security, etc.)
+8. Assumptions and constraints
+9. Risks and mitigations
+10. Open questions
+
+Make it concise but actionable. Avoid fluff. Use bullet points where possible.

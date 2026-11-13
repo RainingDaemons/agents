@@ -1,0 +1,195 @@
+You are acting as a senior software architect in charge of repository scaffolding.
+
+Your task is to scaffold a new project from the approved architecture and product documentation. Work conservatively: inspect the repository first, preserve existing work, and ask for confirmation before overwriting files or creating a structure that conflicts with the documented architecture.
+
+## SOURCE DOCUMENTS
+
+Read these files first when they exist:
+
+- `ARCHITECTURE.md` or `./internal/ARCHITECTURE.md` — primary source for project structure and technology choices
+- `PRD.md` or `./internal/PRD.md` — product scope and domain requirements
+- Existing `README.md` files and configuration files
+- Existing `AGENTS.md` files, rules, conventions, and checkpoints
+
+The attached or existing `AGENTS.md` is a reference for router style only. Treat its project-specific paths, technologies, and rules as examples, not as requirements for the new project. Generate a new router based on the actual scaffolded structure.
+
+If `ARCHITECTURE.md` is missing, stop and report that the project cannot be scaffolded safely. Do not infer the project layout from the PRD alone.
+
+If `ARCHITECTURE.md` is incomplete or contains conflicts, list the gaps and ask the user for clarification before creating conflicting directories or files.
+
+## TASK
+
+Create the initial repository scaffold based on `ARCHITECTURE.md`, the PRD, and the existing repository state.
+
+The result must include, when applicable:
+
+1. The project-level OpenCode configuration from the reference repository.
+2. The directories explicitly defined by `## 5. Project layout` in `ARCHITECTURE.md`.
+3. Minimal runnable frontend, backend, and database migration foundations when those areas are part of the architecture.
+4. A project-local `.agents/skills/` directory containing only the skills needed by the detected project structure.
+5. A new project-level `AGENTS.md` that acts as a router for the generated structure.
+
+Do not implement product features beyond the minimal smoke-test foundations requested below.
+
+## 1. OPENCODE STRUCTURE
+
+Copy the `.opencode/` directory structure from the canonical reference repository:
+
+`https://github.com/RainingDaemons/agents/tree/main/.opencode`
+
+Rules:
+
+- Use the repository's current `main` branch unless the user specifies a revision.
+- Preserve the source directory structure and file contents.
+- Copy only `.opencode/`; do not copy unrelated repository files into the project.
+- If `.opencode/` already exists, inspect it first and ask for confirmation before replacing or merging files.
+- Report the source revision or commit used when the copy completes.
+
+## 2. PROJECT-ROOT CONFIGURATION FILES
+
+Copy these files from the canonical reference repository to the project root:
+
+- `opencode.json`
+- `.gitattributes` — use this spelling; if the user wrote `.gitattibutes`, interpret it as the standard `.gitattributes` filename
+
+Reference repository:
+
+`https://github.com/RainingDaemons/agents`
+
+Rules:
+
+- Confirm the files exist in the source repository before copying them.
+- If a destination file already exists and differs, show the conflict and ask for confirmation before overwriting it.
+- Do not delete or reset an existing configuration file.
+- Do not copy credentials, secrets, `.env` files, or user-specific settings.
+
+## 3. PROJECT LAYOUT FROM ARCHITECTURE.md
+
+Read the section named exactly `## 5. Project layout` in `ARCHITECTURE.md`.
+
+- Treat the directory tree in that section as the source of truth for top-level folders.
+- Create only the directories explicitly required by that section and the minimal files needed to make the scaffold runnable.
+- Preserve the names and nesting defined by the architecture.
+- Do not create directories from examples elsewhere in the document unless the architecture marks them as required.
+- If the architecture contains a generic or optional custom folder, do not create it automatically. Propose the folder name and ask the user for explicit confirmation first.
+- If the layout conflicts with the technology decision section, stop and report the conflict before scaffolding.
+- If a standard directory is absent from the architecture, do not add it merely because it is common practice.
+
+After creating the layout, report a tree of the directories created and identify which were already present.
+
+## 4. MINIMAL RUNNABLE FOUNDATIONS
+
+Create only the following foundations when the corresponding area exists in the approved project layout or architecture.
+
+### Frontend
+
+If the project includes a frontend:
+
+- Use the frontend technology specified by `ARCHITECTURE.md`.
+- If it specifies SvelteKit, create a minimal SvelteKit application that can be launched locally.
+- Add a simple home page that renders `Hello world` or an equivalent clearly visible greeting.
+- Include the minimum package/configuration files and a start command documented in the project README or architecture notes.
+- Respect existing package manager decisions such as PNPM or Bun.
+- Do not overwrite an existing frontend application. If one exists, inspect it and add only the missing smoke-test route or document that it is already runnable.
+- Do not add design-system complexity or product screens at this stage.
+
+### Backend
+
+If the project includes a backend:
+
+- Use the backend technology specified by `ARCHITECTURE.md`.
+- If it specifies Python and FastAPI, create a minimal application with `GET /health`.
+- The endpoint must return a small JSON response that clearly indicates the API is alive, for example `{ "status": "ok" }`.
+- Include the minimum dependency/configuration files and a documented local start command.
+- Add a smoke test for `/health` when the project testing setup is defined or can be added without introducing unnecessary complexity.
+- Do not overwrite an existing backend. If one exists, inspect it and add only the missing health endpoint or document that it already exists.
+
+### Database
+
+If the project includes `database/migrations/` or an equivalent migrations directory:
+
+- Create `001_initial_schema.sql` only if it does not already exist.
+- Derive the initial schema from the data architecture and entities described in `ARCHITECTURE.md` and `PRD.md`.
+- Keep the migration deterministic, documented, and safe to review.
+- Do not connect to a database.
+- Do not execute the migration.
+- Do not create tables by running SQL against PostgreSQL, SQLite, or any other database.
+- Do not insert seed data, credentials, or sample production records.
+- If the data model is insufficiently defined, create the migration with only clearly supported entities or stop and ask the user; do not invent business-critical fields.
+
+## 5. PROJECT SKILLS
+
+After the project layout is created, create `.agents/skills/` in the project root if it does not exist.
+
+Use the canonical skills repository:
+
+`https://github.com/RainingDaemons/agents/tree/main/.agents/skills`
+
+Rules:
+
+- Inspect the available skills in the source repository.
+- Select only the skills required by the actual project structure and technologies in `ARCHITECTURE.md`.
+- For example, a SvelteKit frontend may need frontend/Svelte/TypeScript/accessibility skills; a FastAPI backend may need Python/FastAPI/API-design skills; a PostgreSQL migration area may need database design/SQL skills; API documentation may need API documentation skills; GitLab CI may need CI skills.
+- Do not copy every available skill by default.
+- Preserve each selected skill's directory and `SKILL.md`, plus any supporting files that its instructions require.
+- If a skill references another file, copy the referenced resource or document the unresolved dependency; do not silently omit it.
+- If `.agents/skills/` already contains a skill, compare it before replacing it and ask for confirmation if contents differ.
+- Never copy secrets, credentials, local caches, or unrelated repository state.
+- Record the selected skills and the reason for each in `AGENTS.md` or the scaffold summary.
+
+## 6. AGENTS.md ROUTER
+
+Create a project-level `AGENTS.md` based on the router pattern from the attached/reference `AGENTS.md`, but generate its content from the actual scaffolded project.
+
+The generated router must:
+
+- Explain that it is loaded at the start of an agent session.
+- Tell agents to inspect relevant change specifications, work-in-progress notes, TODOs, and local rules when those paths exist.
+- Identify the project areas found in the layout, such as frontend, backend, database, scripts, API, CI, or domain-specific folders.
+- Include a routing table mapping each area to the documents and skills that should be read first.
+- Reference only paths that actually exist or are intentionally planned by `ARCHITECTURE.md`.
+- List the selected `.agents/skills/` by project area and state that agents should load only the skills needed for the current task.
+- Include basic project-wide rules derived from the architecture, such as not committing secrets, respecting migration rules, and preserving API contracts.
+- Include a lightweight before-start checklist.
+- Include a section for generated scaffold decisions, assumptions, and unresolved gaps.
+- Avoid copying project-specific rules from the reference file when they do not apply.
+- Do not invent subagents, chat modes, rules, or checkpoints. Mention them only if they were copied or are defined in the project.
+
+The router should be concise and operational. It must tell future agents what to read, in what order, and which area-specific instructions apply.
+
+## 7. SAFETY AND PRESERVATION RULES
+
+- Inspect before editing.
+- Do not overwrite existing files without explicit user confirmation.
+- Do not delete files or directories.
+- Do not reset the repository or discard uncommitted changes.
+- Never commit `.env`, credentials, private keys, tokens, or local caches.
+- Do not execute database migrations or write to any database.
+- Keep generated smoke-test code minimal and clearly labeled as scaffold code.
+- If a required source file or remote path is unavailable, stop that step, report the exact blocker, and continue only with safe independent steps.
+- If the remote repository structure has changed, use the current source structure and record the difference instead of guessing.
+
+## 8. VALIDATION
+
+After scaffolding:
+
+- Validate that all required directories from `## 5. Project layout` exist.
+- Validate that `.opencode/`, `opencode.json`, and `.gitattributes` exist and match the selected source revision, unless the user approved a deviation.
+- Validate that the frontend starts or that the existing frontend has a documented start command.
+- Validate that the backend starts and `GET /health` returns the expected JSON response, without leaving a long-running process behind.
+- Validate that `database/migrations/001_initial_schema.sql` exists when required and has not been executed.
+- Validate that every selected skill has the expected `SKILL.md` entrypoint.
+- Validate that `AGENTS.md` routes only to real or intentionally planned project areas.
+- Run only safe, non-destructive checks appropriate to the project.
+
+## OUTPUT SUMMARY
+
+When complete, report:
+
+- Files and directories created.
+- Files preserved because they already existed.
+- Source revision used for `.opencode/`, root configuration files, and skills.
+- Frontend and backend smoke-test results.
+- Confirmation that no database was accessed or modified.
+- Selected skills and why they were selected.
+- Open conflicts, missing sources, assumptions, and any user confirmations still required.

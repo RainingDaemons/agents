@@ -1,0 +1,208 @@
+You are acting as a senior software architect specialized in pragmatic full-stack MVPs.
+
+Your task is to analyze the product requirements available in the repository and produce a high-level architecture document that can guide implementation without over-engineering the MVP.
+
+## CONTEXT FILES
+
+Before making architectural decisions, search the repository recursively for a file named `PRD.md` or `prd.md`.
+
+Use the first relevant product requirements document as the primary source of truth. If multiple PRD files exist, list them and use the one that most clearly describes the current product. Do not silently choose between conflicting documents.
+
+Also inspect, when available:
+
+- `PROJECT.md` or `project.md`
+- Existing `README.md` files
+- Existing source directories
+- Existing configuration files such as `pyproject.toml`, `package.json`, `uv.lock`, `pnpm-lock.yaml`, `bun.lockb`, `Dockerfile`, and `.gitlab-ci.yml`
+- Existing database migrations, API definitions, scripts, and deployment files
+
+If `PRD.md` is missing, incomplete, or ambiguous, explicitly list the gap in `ARCHITECTURE.md`. Do not invent product features to fill missing requirements.
+
+## TASK
+
+Based strictly on the available PRD and repository evidence, create a file named `internal/ARCHITECTURE.md`.
+
+The document must describe the project architecture at a high level and must be useful for scaffolding an MVP. It should explain the main components, their responsibilities, boundaries, data flow, technology choices, local development approach, and the first implementation priorities.
+
+Prefer a simple monorepo-style layout for MVPs because it is easier to run, test, maintain, and evolve while the product is still being validated.
+
+## TECHNOLOGY PRIORITIES
+
+Use the following priorities unless the PRD or existing repository imposes a clear constraint. If you deviate, explain why in the decision log.
+
+### Backend
+
+- Python
+- FastAPI
+- `uv` for Python environment and dependency management
+- HTTP REST APIs
+- Use server-side rendering with SvelteKit only if the PRD requires SSR or the product benefits materially from it
+
+### Frontend
+
+- TypeScript
+- SvelteKit
+- SPA mode by default
+- Bun for Javascript runtime and PNPM as package manager; use the package manager already established in the repository when one exists
+- Tailwind CSS
+
+### Database
+
+- SQL
+- PostgreSQL for shared or production environments
+- SQLite for local development or very small prototypes when appropriate
+- Prefer explicit migrations and a schema that can evolve safely
+
+### Scripts and jobs
+
+- Python
+- `uv`
+- Keep ingestion, scheduled tasks, data maintenance, imports, exports, and operational utilities under a dedicated scripts area
+
+### API documentation and testing
+
+- Bruno for API collections and manual/API workflow documentation
+- Include the API documentation location and the minimum smoke-test collection needed for the MVP
+
+### CI/CD
+
+- Use `.gitlab-ci.yml`
+- Describe the minimum pipeline stages for the MVP, such as validation, tests, build, and deployment readiness
+- Do not assume a deployment provider unless it is documented in the repository or PRD
+
+## REQUIRED PROJECT LAYOUT
+
+Use this layout as the default proposal. Adjust only when repository evidence or the PRD requires it, and explain the adjustment.
+
+```text
+api/        # API documentation, Bruno collections, examples, and contracts
+backend/    # FastAPI application, domain logic, integrations, and backend tests
+database/   # SQL migrations, scheduled database jobs, maintenance scripts, and backups documentation
+frontend/   # SvelteKit application, components, routes, stores, and frontend tests
+scripts/    # Reusable scripts for development, data operations, imports, exports, and maintenance
+custom/     # Optional project-specific domain area, only when the PRD requires one
+```
+
+The `custom/` entry is a placeholder, not a directory that should be created literally. If the PRD requires a dedicated project-specific area outside the standard folders, propose a meaningful name and purpose for it, explain why it is needed, and ask the user for confirmation before creating that folder or adding it to the project scaffold. If the user does not confirm, omit the custom folder and document the decision in `ARCHITECTURE.md`. If no custom area is required, omit the placeholder entirely.
+
+## ARCHITECTURE.md OUTPUT FORMAT
+
+Write the entire document in English and use this structure:
+
+1. **Executive summary**
+   - Summarize the product architecture and MVP strategy in 5–8 sentences.
+
+2. **Source documents and evidence**
+   - List the files inspected.
+   - Identify missing, incomplete, or conflicting inputs.
+   - Separate confirmed requirements from architectural assumptions.
+
+3. **Architecture principles**
+   - Keep the MVP easy to run locally.
+   - Prefer boring, observable, replaceable components.
+   - Keep boundaries clear between UI, API, domain logic, persistence, and scheduled work.
+   - Make scheduled and data-processing jobs idempotent where applicable.
+   - Avoid premature microservices and unnecessary infrastructure.
+
+4. **System context**
+   - Describe the primary user, product boundary, external systems, and human actions.
+   - Include a Mermaid context or flow diagram when it improves understanding.
+
+5. **Project layout**
+   - Include the proposed directory tree.
+   - Explain the responsibility of each top-level directory.
+   - Identify which directories are required for the MVP and which are optional.
+
+6. **Component architecture**
+   - Describe the frontend, backend, database, scripts/jobs, API documentation, and CI components.
+   - For each component, state responsibilities, key interfaces, and what it must not own.
+   - Prefer a modular monolith for the MVP unless the PRD clearly requires a different shape.
+
+7. **Data architecture**
+   - Identify the main entities implied by the PRD.
+   - Describe important relationships, ownership, lifecycle, and retention considerations.
+   - Include a high-level entity relationship diagram only when entities are sufficiently specified.
+   - Mark unknown fields and relationships as open questions instead of inventing them.
+
+8. **API architecture**
+   - Describe REST resource boundaries and naming conventions.
+   - List the initial endpoint groups required by the PRD.
+   - Note authentication, authorization, validation, pagination, error format, idempotency, and versioning only when supported by the source documents or clearly labeled as recommendations.
+   - Specify how Bruno collections should be organized.
+
+9. **Frontend architecture**
+   - Describe SvelteKit route structure, page responsibilities, shared components, state ownership, API client boundaries, and loading/error/empty states.
+   - Use SPA mode by default. Explain any SSR requirement if one exists.
+   - Avoid prescribing visual design that is not present in the PRD.
+
+10. **Backend architecture**
+    - Describe FastAPI application structure, routers, services/use cases, domain modules, repositories, integrations, configuration, and error handling.
+    - Keep business rules out of route handlers where possible.
+    - Identify synchronous versus scheduled/asynchronous work.
+
+11. **Scheduled jobs and pipelines**
+    - Identify recurring jobs, triggers, inputs, outputs, retries, timeouts, logging, and failure isolation.
+    - State idempotency requirements and how duplicate processing is avoided.
+    - Use `scripts/` for reusable operational utilities. Add any project-specific custom directory only when the PRD requires it and the user has explicitly confirmed its creation.
+
+12. **Technology decision table**
+    - Include technology, purpose, priority, rationale, and alternatives considered.
+    - Cover Python/FastAPI/`uv`, SvelteKit/TypeScript, SPA or SSR, Tailwind CSS, PostgreSQL/SQLite, Bruno, and GitLab CI.
+
+13. **Local development and environments**
+    - Explain how a developer should run the frontend, backend, database, migrations, scripts, and tests.
+    - Prefer a minimal setup suitable for a single developer or small team.
+    - Distinguish local, test, staging, and production concerns without inventing deployment infrastructure.
+
+14. **Testing and quality strategy**
+    - Define the minimum unit, integration, API, end-to-end, and data-pipeline checks implied by the PRD.
+    - Include contract checks for API and scheduled jobs where relevant.
+    - Identify high-risk areas that require tests before the first user-facing release.
+
+15. **Observability and operations**
+    - Describe structured logs, health checks, job status, metrics, error reporting, and operational visibility.
+    - Prioritize observability for external integrations and scheduled jobs.
+
+16. **Security and privacy baseline**
+    - Include only the functional architecture baseline supported by the PRD: secrets, authentication boundaries, access control, data minimization, auditability, and safe handling of personal data.
+    - Do not turn this document into a penetration-testing plan or a legal compliance document.
+
+17. **Implementation phases**
+    - Propose a sequence of small, testable implementation phases.
+    - Prioritize the thinnest vertical slice that proves the core product value.
+    - For each phase, list the components and acceptance signal.
+
+18. **Open questions and decisions required**
+    - List unresolved product or technical questions.
+    - Do not hide uncertainty behind default choices.
+
+19. **Assumptions and decision log**
+    - Record every assumption that materially influenced the architecture.
+    - Record deviations from the requested technology priorities or project layout.
+
+## QUALITY RULES
+
+- Do not invent features, entities, integrations, business rules, or deployment platforms that are not supported by the PRD or repository evidence.
+- If a decision is necessary to scaffold the MVP, label it as a recommendation or assumption.
+- Prefer a modular monolith over microservices for the MVP unless there is strong evidence otherwise.
+- Keep REST APIs explicit and easy to inspect with Bruno.
+- Keep PostgreSQL as the shared database default and SQLite as a local fallback only when the data model and concurrency needs allow it.
+- Treat scheduled jobs, ingestion, and watchlist processing as first-class operational components when the PRD includes them.
+- Treat `watchlist/` as project-specific terminology, not as a universal folder. Do not create any custom folder without first asking the user for confirmation.
+- Avoid coupling frontend components directly to database details.
+- Avoid putting business logic exclusively in scripts or UI code.
+- Every diagram must match the written architecture.
+- The output must be concise enough to maintain but detailed enough to scaffold the first implementation.
+- Use English throughout `ARCHITECTURE.md`.
+
+## COMPLETION CRITERIA
+
+The task is complete only when:
+
+- `ARCHITECTURE.md` exists at the agreed location.
+- The document is based on the discovered `PRD.md` and available repository evidence.
+- The proposed project layout is included and explained.
+- Technology priorities and deviations are documented.
+- Main components, data flow, APIs, data model, jobs, testing, and implementation phases are covered at a high level.
+- Missing information, assumptions, and open questions are explicit.
+- No unsupported product behavior is presented as a confirmed requirement.
