@@ -242,28 +242,28 @@ The task is complete only when:
 
 ## DESIGN SAMPLE OUTPUT
 
-After `DESIGN.md` is finalized and approved, produce the static design sample as a second deliverable. Read the finalized `DESIGN.md` and generate `internal/design_sample.html`:
+After `DESIGN.md` is finalized and approved, produce the static design sample as a second deliverable. Read the finalized `DESIGN.md` and generate `design_sample.html` in the same directory as `DESIGN.md`:
 
-a single self-contained static style-guide page (inline CSS, no frameworks, no external JS) that previews the approved "Signal Path" design for the WAVVES SYSTEMS website. Use ONLY the tokens, values and rules from DESIGN.md (§6 colors, §7 type, §8 layout, §11 components, §12 motion, §16 CSS variables). Do not invent colors, fonts or claims.
+A single self-contained static style-guide page (inline CSS, no frameworks, no build step, no external JS) that previews the approved design direction for the product described in `DESIGN.md` and the PRD. Use ONLY the tokens, values, and rules defined in `DESIGN.md` (§4 brand, §6 colors, §7 typography, §8 layout, §11 components, §12 motion, §16 tokens, §18 anti-patterns). Do not invent colors, fonts, copy, claims, or product behavior that `DESIGN.md` does not define. If `DESIGN.md` labels the direction as provisional or exploratory, label the sample the same way.
 
 Technical
-- Copy the :root and prefers-color-scheme: light token blocks from §16.1 verbatim.
-- Load Space Grotesk 600, Inter 400/500 and IBM Plex Mono 500 from Google Fonts, with the fallback stacks from §7.1.
-- Add a small "Dark / Light" preview switch (data-theme attribute) so both themes can be compared; the default follows prefers-color-scheme.
-- Responsive from 360px; honor prefers-reduced-motion; visible :focus-visible rings.
+- Copy the token blocks from §16 (CSS custom properties and any mode/media-query variants) verbatim.
+- Load the fonts and weights specified in §7.1 with the fallback stacks from §7.1. Use a font service only if `DESIGN.md` allows it; otherwise rely on the declared fallbacks.
+- If §6 defines more than one color mode, add a small theme switch (for example a `data-theme` attribute) so the modes can be compared; default to the user’s `prefers-color-scheme`. If §6 defers additional modes, omit the switch and say so in one caption.
+- Responsive from the smallest breakpoint defined in §8, or 360px if none is specified; honor `prefers-reduced-motion`; visible `:focus-visible` rings; meet the target sizes in §14.
 
 Sections, in this order
-1. Header: provisional wordmark (WAVVES / SYSTEMS), theme switch, section anchor nav.
-2. Color palette: swatches grouped by role (canvas/surface, text, accent, semantic, borders), each showing token name, HEX and a pass/fail contrast ratio from §6.5. Include the 70/20/10 emphasis bar.
-3. Typography: font roles, the full type scale (display-xl to caption) rendered at desktop and mobile sizes with a label of size/line-height/weight/tracking, plus a sample body paragraph at 68ch, a mono label, inline link, code block and tabular numerals.
-4. Spacing, radius and borders: visual scale for space-1..32, radius tokens, border variants.
-5. Components with every state: buttons (primary/secondary/ghost x default, hover, focus, disabled, loading), links, text input, select, checkbox group (default, focus, error), status badges (Available / In development with the pulsing dot / Planned), alerts (info/success/warning/error), breadcrumbs, skip link.
-6. Composed examples using real components: Header + mobile-nav preview, Home hero (approved headline, two CTAs), value pillars, product strip with Audioland featured and the two "In development" cards, roadmap items, stat readouts, the waitlist form with success and error states, hardware teaser block with the concept disclaimer, and the footer.
-7. Do / Don't strip: short visual examples (e.g. amber used only for primary action; no gradients, glow or card lift).
+1. Header: the wordmark or product name from §4 (labelled provisional if §4 says so), the theme switch when applicable, and a section anchor nav.
+2. Color palette: swatches grouped by the roles defined in §6 (canvas/surface, text, accent/primary, semantic, borders, and any others §6 defines), each showing the token name, HEX, and the WCAG AA pass/fail result for the pairing from §6’s contrast table. Include the proportional emphasis guidance from §6 if one is defined.
+3. Typography: font roles and the full type scale from §7 (largest display to smallest caption), each rendered at desktop and mobile sizes with a label of size/line-height/weight/tracking, plus the representative text samples §7 requires (for example a body paragraph at the defined measure, labels, inline links, code, tabular numerals) — only those the product actually uses.
+4. Spacing, radius and borders: a visual scale for every spacing, radius and border token defined in §8/§16.
+5. Components with every state: for each component and state defined in §11, render a labelled instance. Cover at least the foundations §11 includes (buttons with primary/secondary/ghost across default/hover/focus/disabled/loading as applicable, links, text input, select, checkbox group default/focus/error, badges for each status the product defines, alerts for info/success/warning/error, breadcrumbs, skip link) and omit any that §11 does not define.
+6. Composed examples using real components: a header with the mobile-navigation preview; the primary screen or hero from §10 with its actual primary and secondary actions; the key MVP screens and flows from §10 built from §11 components and real §13 copy, including form success and error states; and the footer. Do not invent screens, content, or claims.
+7. Do / Don’t strip: short visual examples of the anti-patterns from §18 (for example an accent color reserved for its defined role; no gradients, glow or elevation effects that §8 excludes).
 
 Rules
-- Use placeholder media as flat surface-colored frames with fixed aspect ratios; no stock images, fake testimonials, specs, prices, or dates.
-- Copy comes from DESIGN.md §13 and the PRD; sentence case, no hype words.
-- Keep it clean and scannable: one section per anchor, a short caption per block.
+- Use placeholder media as flat surface-colored frames with the fixed aspect ratios from §8; no stock images, fake testimonials, specs, prices, or dates unless `DESIGN.md` supplies them.
+- Copy comes from `DESIGN.md` §13 and the PRD; follow §13’s case, tone, and vocabulary rules (sentence case unless §13 says otherwise); no hype words or filler.
+- Keep it clean and scannable: one section per anchor, a short caption per block, and a note when a defined item is intentionally omitted.
 
 Deliver only `design_sample.html` for this second step (in addition to the completed `DESIGN.md`).
