@@ -239,3 +239,31 @@ The task is complete only when:
 - The visual system, responsive rules, components, states, accessibility, and performance constraints are implementable.
 - Confirmed requirements, assumptions, open questions, and deferred ideas are clearly separated.
 - No unsupported product behavior is presented as a confirmed requirement.
+
+## DESIGN SAMPLE OUTPUT
+
+After `DESIGN.md` is finalized and approved, produce the static design sample as a second deliverable. Read the finalized `DESIGN.md` and generate `internal/design_sample.html`:
+
+a single self-contained static style-guide page (inline CSS, no frameworks, no external JS) that previews the approved "Signal Path" design for the WAVVES SYSTEMS website. Use ONLY the tokens, values and rules from DESIGN.md (§6 colors, §7 type, §8 layout, §11 components, §12 motion, §16 CSS variables). Do not invent colors, fonts or claims.
+
+Technical
+- Copy the :root and prefers-color-scheme: light token blocks from §16.1 verbatim.
+- Load Space Grotesk 600, Inter 400/500 and IBM Plex Mono 500 from Google Fonts, with the fallback stacks from §7.1.
+- Add a small "Dark / Light" preview switch (data-theme attribute) so both themes can be compared; the default follows prefers-color-scheme.
+- Responsive from 360px; honor prefers-reduced-motion; visible :focus-visible rings.
+
+Sections, in this order
+1. Header: provisional wordmark (WAVVES / SYSTEMS), theme switch, section anchor nav.
+2. Color palette: swatches grouped by role (canvas/surface, text, accent, semantic, borders), each showing token name, HEX and a pass/fail contrast ratio from §6.5. Include the 70/20/10 emphasis bar.
+3. Typography: font roles, the full type scale (display-xl to caption) rendered at desktop and mobile sizes with a label of size/line-height/weight/tracking, plus a sample body paragraph at 68ch, a mono label, inline link, code block and tabular numerals.
+4. Spacing, radius and borders: visual scale for space-1..32, radius tokens, border variants.
+5. Components with every state: buttons (primary/secondary/ghost x default, hover, focus, disabled, loading), links, text input, select, checkbox group (default, focus, error), status badges (Available / In development with the pulsing dot / Planned), alerts (info/success/warning/error), breadcrumbs, skip link.
+6. Composed examples using real components: Header + mobile-nav preview, Home hero (approved headline, two CTAs), value pillars, product strip with Audioland featured and the two "In development" cards, roadmap items, stat readouts, the waitlist form with success and error states, hardware teaser block with the concept disclaimer, and the footer.
+7. Do / Don't strip: short visual examples (e.g. amber used only for primary action; no gradients, glow or card lift).
+
+Rules
+- Use placeholder media as flat surface-colored frames with fixed aspect ratios; no stock images, fake testimonials, specs, prices, or dates.
+- Copy comes from DESIGN.md §13 and the PRD; sentence case, no hype words.
+- Keep it clean and scannable: one section per anchor, a short caption per block.
+
+Deliver only `design_sample.html` for this second step (in addition to the completed `DESIGN.md`).
