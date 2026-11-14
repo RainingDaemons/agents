@@ -37,14 +37,15 @@ Use the following priorities unless the PRD or existing repository imposes a cle
 - `uv` for Python environment and dependency management
 - HTTP REST APIs
 - Use server-side rendering with SvelteKit only if the PRD requires SSR or the product benefits materially from it
+- Don't create backend if the PRD requires SSG
 
 ### Frontend
 
 - TypeScript
-- SvelteKit
-- SPA mode by default
 - Bun for Javascript runtime and PNPM as package manager; use the package manager already established in the repository when one exists
 - Tailwind CSS
+- Use Sveltekit with SPA mode by default
+- Use Astro (instead of Sveltekit) only if the PRD requires SSG or the product benefits materially from it
 
 ### Database
 
@@ -52,17 +53,20 @@ Use the following priorities unless the PRD or existing repository imposes a cle
 - PostgreSQL for shared or production environments
 - SQLite for local development or very small prototypes when appropriate
 - Prefer explicit migrations and a schema that can evolve safely
+- Don't create databases if the PRD requires SSG
 
 ### Scripts and jobs
 
 - Python
 - `uv`
 - Keep ingestion, scheduled tasks, data maintenance, imports, exports, and operational utilities under a dedicated scripts area
+- Don't create scripts if the PRD requires SSG
 
 ### API documentation and testing
 
 - Bruno for API collections and manual/API workflow documentation
 - Include the API documentation location and the minimum smoke-test collection needed for the MVP
+- Don't create api docs if the PRD requires SSG
 
 ### CI/CD
 
