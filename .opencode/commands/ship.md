@@ -1,5 +1,6 @@
 ---
 description: Orchestrates a feature end to end.
+agent: orchestrator
 # model: <provider/model-id>
 ---
 
@@ -19,19 +20,20 @@ If the description is missing, ask before starting.
 
 ## How to run each stage
 
-**Always launch each stage as a visible subagent** with the `task` tool, using the
-mode name as `subagent_type`. Never apply a mode's rules inline in the current
-session: the user must be able to see each stage running. Give each subagent a short
-description (3-5 words) and a self-contained prompt.
+**Hard rule: every stage runs in a visible subagent.** Always launch it with the
+`subagent` tool, using the mode name as `agent`. The orchestrator only coordinates:
+it never applies a mode's rules inline, never edits production code, and never runs a
+stage's commands itself. The user must be able to see each stage running. Give each
+subagent a short description (3-5 words) and a self-contained prompt.
 
 The only valid agents are:
 
-| Stage   | `subagent_type`         | Notes                                            |
-|---------|-------------------------|--------------------------------------------------|
-| build   | — (run in this session) | No `build` subagent; implement directly here.    |
-| test    | `test`                  | Reports bugs, never fixes them.                  |
-| review  | `review`                | Read-only.                                       |
-| commit  | `commit`                | Asks for the branch type and description itself. |
+| Stage   | `agent`                 | Notes                                                    |
+|---------|-------------------------|----------------------------------------------------------|
+| build   | `build`                 | Implements the feature and applies test/review findings.  |
+| test    | `test`                  | Reports bugs, never fixes them.                          |
+| review  | `review`                | Read-only.                                               |
+| commit  | `commit`                | Asks for the branch type and description itself.         |
 
 Each subagent starts with a fresh context, so its prompt must stand alone: pass only
 a **state summary**, not the full history, plus the exact files/diff it must inspect
@@ -46,8 +48,11 @@ Open findings: <severity + summary>
 Task: <what this stage must do and return>
 ```
 
-If a `task` call is rejected (agent unavailable), fall back to applying that mode's
-rules inline and say so in one line.
+If the named agent is unavailable on the host, do **not** fall back to running the
+stage inline. Launch a `general` subagent with the same self-contained brief plus the
+mode rules it must follow, record the substitution in `state.md` and `events.jsonl`,
+and continue. If no subagent can be launched at all, stop with `BLOCKED` and report;
+the orchestrator must never implement, test or review on its own.
 
 ## Run state and shared memory
 
@@ -255,7 +260,7 @@ stages are re-run on the new diff, but `test` is always re-run.
 build -> test -> review
 ```
 
-1. **build**: implement the feature.
+1. **build**: implement the feature (`build` mode).
 2. **test**: write/run the feature's tests (`test` mode). Reports bugs, does not fix them.
 3. **review**: review the diff against standards and spec (`review` mode).
 
